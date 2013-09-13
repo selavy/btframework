@@ -1,5 +1,8 @@
 #include "PortfolioController.hpp"
 
+/* class variable */
+std::mutex PortfolioController::mtx;
+
 PortfolioController::PortfolioController()
 {
 } /* end PortfolioController::PortfolioController() */
@@ -29,10 +32,18 @@ void PortfolioController::run(
 		    void (*visitor)( Portfolio* )
 		    )
 {
+  std::vector<std::thread> threadList;
+
   for( auto it = std::begin( PortfoliosList ); it != std::end( PortfoliosList ); ++it )
     {
-      (*visitor)( *it );
+      threadList.push_back( std::thread( visitor, *it ) );
     }
+
+  for( std::vector<std::thread>::iterator it = threadList.begin(); it != threadList.end(); ++it )
+    {
+      it->join();
+    }
+
 } /* end PortfolioController::run() */
 
 void PortfolioController::removePortfolio(
@@ -48,3 +59,19 @@ void PortfolioController::removePortfolio(
 	}
     }
 } /* end PortfolioController::removePortfolio() */
+
+/**
+ * Class method
+ */
+void PortfolioController::lockMutex()
+{
+  mtx.lock();
+} /* end PortfolioController::lockMutex() */
+
+/**
+ * Class method
+ */
+void PortfolioController::unlockMutex()
+{
+  mtx.unlock();
+} /* end PortfolioController::unlockMutex() */

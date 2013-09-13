@@ -4,6 +4,8 @@
 #include "../../Portfolio/src/Portfolio.hpp"
 #include<vector>
 #include<unordered_map>
+#include<thread>
+#include<mutex>
 
 class PortfolioController
 {
@@ -18,8 +20,11 @@ public:
 
   void removePortfolio( std::string aName );
 
+  static void lockMutex();
+  static void unlockMutex();
 private:
   std::vector<Portfolio*> PortfoliosList;
+  static std::mutex mtx;
 };
 
 #endif

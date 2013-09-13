@@ -1,5 +1,7 @@
 #include<iostream>
 #include "../src/PortfolioController.hpp"
+#include<thread>
+#include<mutex>
 
 using namespace std;
 
@@ -26,5 +28,7 @@ int main( int argc, char ** argv )
 
 void printer( Portfolio * p )
 {
+  PortfolioController::lockMutex();
   cout << p->getName() << " with $" << p->getCurrentCapital() << endl;
+  PortfolioController::unlockMutex();
 }
