@@ -12,25 +12,42 @@ PortfolioController::~PortfolioController()
 } /* end PortfolioController::~PortfolioController() */
 
 void PortfolioController::addPortfolio(
-			     std::string aName,
-			     double initialValue,
-			     std::unordered_map<std::string, int> aHoldings
-			     )
+				       std::string aName,
+				       mpf_class initialValue,
+				       std::unordered_map<std::string, int> aHoldings
+				       )
 {
   PortfoliosList.push_back( new Portfolio( aName, initialValue, aHoldings ) );
 } /* end PortfolioController::addPortfolio() */
 
 void PortfolioController::addPortfolio(
-			     std::string aName,
-			     double initialValue
+				       std::string aName,
+				       double initialValue,
+				       std::unordered_map<std::string, int> aHoldings
 			     )
+{
+  PortfoliosList.push_back( new Portfolio( aName, mpf_class( initialValue, 2 ), aHoldings ) );
+} /* end PortfolioController::addPortfolio() */
+
+void PortfolioController::addPortfolio(
+				       std::string aName,
+				       mpf_class initialValue
+				       )
 {
   PortfoliosList.push_back( new Portfolio( aName, initialValue ) );
 } /* end PortfolioController::addPortfolio() */
 
+void PortfolioController::addPortfolio(
+				       std::string aName,
+				       double initialValue
+				       )
+{
+  PortfoliosList.push_back( new Portfolio( aName, mpf_class( initialValue, 2 ) ) );
+} /* end PortfolioController::addPortfolio() */
+
 void PortfolioController::run(
-		    void (*visitor)( Portfolio* )
-		    )
+			      void (*visitor)( Portfolio* )
+			      )
 {
   std::vector<std::thread> threadList;
 
@@ -47,8 +64,8 @@ void PortfolioController::run(
 } /* end PortfolioController::run() */
 
 void PortfolioController::removePortfolio(
-				std::string aName
-				)
+					  std::string aName
+					  )
 {
   for( auto it = std::begin( PortfoliosList ); it != std::end( PortfoliosList ); ++it )
     {

@@ -4,6 +4,7 @@
 #include<string>
 #include<unordered_map>
 #include<iostream>
+#include<gmpxx.h>
 
 class Portfolio
 {
@@ -12,6 +13,8 @@ public:
   Portfolio();
   Portfolio( std::string aName, double aInitialValue );
   Portfolio( std::string aName, double aInitialValue, std::unordered_map<std::string, int> aHoldings );
+  Portfolio( std::string aName, mpf_class aInitialValue );
+  Portfolio( std::string aName, mpf_class aInitialValue, std::unordered_map<std::string, int> aHoldings );
   Portfolio( const Portfolio& aPortfolio );
 
   virtual ~Portfolio() {}
@@ -19,9 +22,13 @@ public:
   /* Accessors */
   std::string getName() const throw();
   int hasHolding( std::string companyName ) const;
-  double getInitialCapital() const throw();
-  double getNetWorth() const throw();
-  double getCurrentCapital() const throw();
+  mpf_class getInitialCapital() const throw();
+  mpf_class getNetWorth() const throw();
+  mpf_class getCurrentCapital() const throw();
+  double getDBLInitialCapital();
+  double getDBLNetWorth();
+  double getDBLCurrentCapital();
+ 
   std::unordered_map<std::string, int> getHoldings() const throw();
   std::unordered_map<std::string, int> getInitialHoldings() const throw();
   void print( std::ostream & os );
@@ -29,22 +36,26 @@ public:
   /* Modifiers */
   void setName( std::string aName );
   void setInitialCapital( double aAmount );
+  void setInitialCapital( mpf_class aAmount );
 
   /* Methods */
-  void action( std::string aCompanyName, int aAmount, int aSharePrice );
+  void action( std::string aCompanyName, int aAmount, double aSharePrice );
   void sellAllPositions();
 
 private:
   void calcNetWorth();
-  void sell( std::string aCompanyName, int aAmount, int aSharePrice );
-  void buy( std::string aCompanyName, int Amount, int aSharePrice );
+  void sell( std::string aCompanyName, int aAmount, double aSharePrice );
+  void buy( std::string aCompanyName, int Amount, double aSharePrice );
+  void setCurrentCapital( double aAmount );
+  void setCurrentCapital( mpf_class aAmount );
+
 
   std::string Name;
   std::unordered_map<std::string, int> Holdings;
   std::unordered_map<std::string, int> InitialHoldings;
-  double InitialCapital;
-  double CurrentCapital;
-  double NetWorth;
+  mpf_class InitialCapital;
+  mpf_class CurrentCapital;
+  mpf_class NetWorth;
 };
 
 #endif

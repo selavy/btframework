@@ -2,11 +2,11 @@
 #include "../../Database/src/Database.hpp"
 
 Portfolio::Portfolio() :
-  Name(""),
-  InitialCapital( 0.0 ),
-  CurrentCapital( 0.0 ),
-  NetWorth( 0.0 )
+  Name("")
 {
+  setInitialCapital( 0.0 );
+  setCurrentCapital( 0.0 );
+  calcNetWorth();
 } /* end Portfolio::Portfolio() */
 
 Portfolio::Portfolio(
@@ -14,11 +14,11 @@ Portfolio::Portfolio(
 		     double aInitialValue
 		     )
   :
-  Name( aName ),
-  InitialCapital( aInitialValue ),
-  CurrentCapital( aInitialValue ),
-  NetWorth( aInitialValue )
+  Name( aName )
 {
+  setInitialCapital( aInitialValue );
+  setCurrentCapital( aInitialValue );
+  calcNetWorth();
 } /* end Portfolio::Portfolio() */
 
 Portfolio::Portfolio(
@@ -29,17 +29,39 @@ Portfolio::Portfolio(
   :
   Name( aName ),
   Holdings( aHoldings ),
+  InitialHoldings( aHoldings )
+{
+  setInitialCapital( aInitialValue );
+  setCurrentCapital( aInitialValue );
+  calcNetWorth();
+} /* end Portfolio::Portfolio() */
+
+Portfolio::Portfolio(
+		     std::string aName,
+		     mpf_class aInitialValue
+		     )
+  :
+  Name( aName ),
+  InitialCapital( aInitialValue ),
+  CurrentCapital( aInitialValue ),
+  NetWorth( aInitialValue)
+{
+} /* end Portfolio::Portfolio() */
+
+Portfolio::Portfolio(
+		     std::string aName,
+		     mpf_class aInitialValue,
+		     std::unordered_map<std::string, int> aHoldings
+		     )
+  :
+  Name( aName ),
+  Holdings( aHoldings ),
   InitialHoldings( aHoldings ),
   InitialCapital( aInitialValue ),
   CurrentCapital( aInitialValue )
 {
-  NetWorth = aInitialValue;
-
-  for( auto it = std::begin( Holdings ); it != std::end( Holdings ); ++it )
-    {
-      NetWorth += Database::getInstance()->getLatestPrice( it->first ) * it->second;
-    }
-} /* end Portfolio::Portfolio() */
+  calcNetWorth();
+} /* end Portfoliio::Portfolio() */
 
 /* Copy Constructor */
 Portfolio::Portfolio(
@@ -75,20 +97,37 @@ int Portfolio::hasHolding(
   return got->second;
 } /* end Portfolio::hasHolding() */
 
-double Portfolio::getInitialCapital() const throw()
+mpf_class Portfolio::getInitialCapital() const throw()
 {
   return InitialCapital;
 } /* end Portfolio::getInitialCapital() */
 
-double Portfolio::getNetWorth() const throw()
+mpf_class Portfolio::getNetWorth() const throw()
 {
   return NetWorth;
 } /* end Portfolio::getNetWorth() */
 
-double Portfolio::getCurrentCapital() const throw()
+mpf_class Portfolio::getCurrentCapital() const throw()
 {
   return CurrentCapital;
 } /* end Portfolio::getCurrentCapital() */
+
+double Portfolio::getDBLInitialCapital()
+{
+  return InitialCapital.get_d();
+} /* end Portfolio::getDBLInitialCapital() */
+
+double Portfolio::getDBLNetWorth()
+{
+  /** TODO **/
+  return NetWorth.get_d();
+} /* end Portfolio::getDBLNetWorth() */
+
+double Portfolio::getDBLCurrentCapital()
+{
+  /** TODO **/
+  return CurrentCapital.get_d();
+} /* end Portfolio::getDBLCurrentCapital() */
 
 std::unordered_map<std::string, int> Portfolio::getHoldings() const throw()
 {
@@ -127,13 +166,20 @@ void Portfolio::setInitialCapital(
 				  double aAmount
 				  )
 {
-  InitialCapital = aAmount;
+  InitialCapital = mpf_class( aAmount, 2 );
 } /* end Portfolio::setInitalCapital() */
+
+void Portfolio::setInitialCapital(
+				  mpf_class aAmount
+				  )
+{
+  InitialCapital = mpf_class( aAmount, 2 );
+} /* end Portfolio::setInitialCapital() */
 
 void Portfolio::action(
 		       std::string aCompanyName,
 		       int aAmount,               //<! Positive = buy, Negative = sell
-		       int aSharePrice
+		       double aSharePrice
 		       )
 {
   if( aAmount == 0 )
@@ -159,11 +205,11 @@ void Portfolio::calcNetWorth()
 
   for( auto it = std::begin( Holdings ); it != std::end( Holdings ); ++it )
     {
-      NetWorth += ( Database::getInstance()->getLatestPrice( it->first ) * it->second );
+      NetWorth += mpf_class( Database::getInstance()->getLatestPrice( it->first ) * it->second );
     }
 } /* end Portfolio::calcNetWorth() */
 
-void Portfolio::sell( std::string aCompanyName, int aAmount, int aSharePrice )
+void Portfolio::sell( std::string aCompanyName, int aAmount, double aSharePrice )
 {
   std::unordered_map<std::string, int>::const_iterator got = Holdings.find( aCompanyName );
 
@@ -175,7 +221,7 @@ void Portfolio::sell( std::string aCompanyName, int aAmount, int aSharePrice )
 
   int amountToSell = ( got->second > aAmount ) ? aAmount : got->second;
 
-  CurrentCapital += ( amountToSell * aSharePrice );
+  CurrentCapital += mpf_class( amountToSell * aSharePrice );
 
   Holdings.at( aCompanyName ) -= amountToSell;
 
@@ -188,9 +234,9 @@ void Portfolio::sell( std::string aCompanyName, int aAmount, int aSharePrice )
   calcNetWorth();
 } /* end Portfolio::sell() */
 
-void Portfolio::buy( std::string aCompanyName, int aAmount, int aSharePrice )
+void Portfolio::buy( std::string aCompanyName, int aAmount, double aSharePrice )
 {
-  if( ( aAmount * aSharePrice ) > getCurrentCapital() )
+  if( mpf_class( aAmount * aSharePrice ) > getCurrentCapital() )
     {
       /* don't have enough capital to make this purchase */
       /* maybe in the future we will remove this check   */
@@ -198,7 +244,7 @@ void Portfolio::buy( std::string aCompanyName, int aAmount, int aSharePrice )
       return;
     }
 
-  CurrentCapital -= ( aAmount * aSharePrice );
+  CurrentCapital -= mpf_class( aAmount * aSharePrice );
 
   std::unordered_map<std::string, int>::iterator got = Holdings.find( aCompanyName );
 
@@ -215,3 +261,13 @@ void Portfolio::buy( std::string aCompanyName, int aAmount, int aSharePrice )
   /* recalculate networth */
   calcNetWorth();
 } /* end Portfolio::buy() */
+
+void Portfolio::setCurrentCapital( double aAmount )
+{
+  CurrentCapital = mpf_class( aAmount, 2 );
+} /* end Portfolio::setCurrentCapital() */
+
+void Portfolio::setCurrentCapital( mpf_class aAmount )
+{
+  CurrentCapital = mpf_class( aAmount, 2 );
+} /* end Portfolio::setCurrentCapital() */

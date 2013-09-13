@@ -6,6 +6,7 @@
 #include<unordered_map>
 #include<thread>
 #include<mutex>
+#include<gmpxx.h>
 
 class PortfolioController
 {
@@ -13,7 +14,9 @@ public:
   PortfolioController();
   virtual ~PortfolioController();
 
+  void addPortfolio( std::string aName, mpf_class initialValue, std::unordered_map<std::string, int> aHoldings );
   void addPortfolio( std::string aName, double initialValue, std::unordered_map<std::string, int> aHoldings );
+  void addPortfolio( std::string aName, mpf_class initialValue );
   void addPortfolio( std::string aName, double initialValue );
 
   void run( void (*visitor)( Portfolio* ) );
