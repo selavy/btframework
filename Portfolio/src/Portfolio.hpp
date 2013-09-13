@@ -17,13 +17,13 @@ public:
   virtual ~Portfolio() {}
 
   /* Accessors */
-  inline std::string getName() const throw();
+  std::string getName() const throw();
   int hasHolding( std::string companyName ) const;
-  inline double getInitialCapital() const throw();
-  inline double getNetWorth() const throw();
-  inline double getCurrentCapital() const throw();
-  inline std::unordered_map<std::string, int> getHoldings() const throw();
-  inline std::unordered_map<std::string, int> getInitialHoldings() const throw();
+  double getInitialCapital() const throw();
+  double getNetWorth() const throw();
+  double getCurrentCapital() const throw();
+  std::unordered_map<std::string, int> getHoldings() const throw();
+  std::unordered_map<std::string, int> getInitialHoldings() const throw();
   void print( std::ostream & os );
 
   /* Modifiers */

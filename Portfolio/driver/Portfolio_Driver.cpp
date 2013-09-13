@@ -18,5 +18,7 @@ int main( int argc, char ** argv )
   a.action( "YHOO", 1000, Database::getInstance()->getLatestPrice( "YHOO" ) );
   a.print(std::cout);
 
+
+  std::cout << a.getName() << std::endl;
   return 0;
 }

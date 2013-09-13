@@ -54,7 +54,7 @@ Portfolio::Portfolio(
   NetWorth = aPortfolio.getNetWorth();
 } /* end Portrolio::Portfolio() */
 
-inline std::string Portfolio::getName() const throw()
+std::string Portfolio::getName() const throw()
 {
   return Name;
 } /* end Portfolio::getName() */
@@ -75,27 +75,27 @@ int Portfolio::hasHolding(
   return got->second;
 } /* end Portfolio::hasHolding() */
 
-inline double Portfolio::getInitialCapital() const throw()
+double Portfolio::getInitialCapital() const throw()
 {
   return InitialCapital;
 } /* end Portfolio::getInitialCapital() */
 
-inline double Portfolio::getNetWorth() const throw()
+double Portfolio::getNetWorth() const throw()
 {
   return NetWorth;
 } /* end Portfolio::getNetWorth() */
 
-inline double Portfolio::getCurrentCapital() const throw()
+double Portfolio::getCurrentCapital() const throw()
 {
   return CurrentCapital;
 } /* end Portfolio::getCurrentCapital() */
 
-inline std::unordered_map<std::string, int> Portfolio::getHoldings() const throw()
+std::unordered_map<std::string, int> Portfolio::getHoldings() const throw()
 {
   return Holdings;
 } /* end Portfolio::getHoldings() */
 
-inline std::unordered_map<std::string, int> Portfolio::getInitialHoldings() const throw()
+std::unordered_map<std::string, int> Portfolio::getInitialHoldings() const throw()
 {
   return InitialHoldings;
 } /* end Portfolio::getInitalHoldings() */
