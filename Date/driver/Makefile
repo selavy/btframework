@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -Werror -ansi -pedantic -g
+CFLAGS = -Wall -Werror -ansi -pedantic -g -std=c++11
 
 all: driver
 	../build/driver
