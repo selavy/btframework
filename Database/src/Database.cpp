@@ -1,6 +1,7 @@
 #include "Database.hpp"
 
 Database * Database::instance = NULL;
+std::mutex Database::mtx;
 
 Database::Database( std::string aDatabase )
 {
@@ -18,6 +19,8 @@ Database * Database::getInstance()
 
 double Database::getLatestPrice( std::string aCompanyName )
 {
+  Database::lockMutex();
+
   double mean;
   double variance;
 
@@ -40,5 +43,23 @@ double Database::getLatestPrice( std::string aCompanyName )
 
   mean *= ( rand() % 50 );
   variance *= ( rand() % 25 );
+
+  Database::unlockMutex();
   return mean + variance;
 } /* end Database::getLatesetPrice() */
+
+/**
+ * Class Method
+ */
+void Database::lockMutex()
+{
+  mtx.lock();
+} /* end Database::lockMutex() */
+
+/**
+ * Class Method
+ */
+void Database::unlockMutex()
+{
+  mtx.unlock();
+} /* end Database::unlockMutex() */
