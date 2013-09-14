@@ -1,0 +1,25 @@
+# comment
+# locate the module executable
+MODULE_LOCATION = ./TestModule
+# granularity for determining what t-x means
+# choices = SECOND, MINUTE, DAY, WEEK, MONTH, YEAR
+GRANULARITY = DAY
+# this begins the arguments list startings with argv[1]
+ARGUMENTS
+COMPANY
+RAWDATA t-9
+RAWDATA t-8
+RAWDATA t-7
+RAWDATA t-6
+RAWDATA t-5
+RAWDATA t-4
+RAWDATA t-3
+RAWDATA t-2
+RAWDATA t-1
+RAWDATA t
+CAPITAL
+SHARES
+#ends the arguments list
+END ARGUMENTS
+END
+
