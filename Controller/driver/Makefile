@@ -1,5 +1,6 @@
 CC = g++
 CFLAGS = -Wall -Werror -pedantic -ansi -g -std=c++11
+THREAD = -lpthread
 
 all: driver
 	./driver
