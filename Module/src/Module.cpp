@@ -88,13 +88,16 @@ void Module::ModuleHeaderReader::read()
       if( !ss.is_open() )
 	throw( new Module::ModuleReaderException );
     }
-  else
-    {
-      /* read in the file */
-      /* TODO */
-      Read = true;
 
+  /* read in the file */
+  std::string line;
+  
+  while( getline( ss, line ) )
+    {
+	
     }
+
+  Read = true;
 } /* end Module::ModuleHeaderReader::read() */
 
 /********************************************************************/
